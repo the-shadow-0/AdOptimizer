@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Workspace {
+  id                 String   @id @default(uuid())
+  name               String
+  tier               String   @default("GROWTH") // GROWTH, PRO, AGENCY
+  stripeCustomerId   String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  integrations       Integration[]
+  campaignGoals      CampaignGoal[]
+  creativeAssets     CreativeAsset[]
+  audiences          Audience[]
+}
+
+model Integration {
+  id             String    @id @default(uuid())
+  workspaceId    String
+  platform       String    // META, GOOGLE, TIKTOK, GA4
+  accessToken    String
+  adAccountId    String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model CampaignGoal {
+  id                 String   @id @default(uuid())
+  workspaceId        String
+  name               String
+  targetRoas         Float
+  maxCpa             Float
+  dailyBudgetLimit   Float
+  status             String   @default("ACTIVE") // DRAFT, LEARNING, ACTIVE, PAUSED
+  spend              Float    @default(0)
+  roas               Float    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  experiments        Experiment[]
+}
+
+model CreativeAsset {
+  id                 String   @id @default(uuid())
+  workspaceId        String
+  imageUrl           String
+  headline           String
+  bodyCopy           String?
+  aiGenerated        Boolean  @default(false)
+  status             String   @default("ACTIVE") // ACTIVE, FATIGUED, WINNING, LEARNING
+  performanceScore   Float?
+  roas               Float    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  experiments        Experiment[]
+}
+
+model Audience {
+  id                 String   @id @default(uuid())
+  workspaceId        String
+  name               String
+  platformAudienceId String?
+  size               String   // e.g. "450k", "2.1M"
+  performance        String   @default("LEARNING") // EXCELLENT, GOOD, LEARNING, DEGRADING
+  roas               Float    @default(0)
+  cpa                Float    @default(0)
+  parameters         String?  // JSON string
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  experiments        Experiment[]
+}
+
+model Experiment {
+  id                 String   @id @default(uuid())
+  campaignGoalId     String
+  creativeAssetId    String
+  audienceId         String
+  platform           String   // META, TIKTOK, GOOGLE
+  status             String   @default("LEARNING") // DEPLOYED, SCALING, TERMINATED, LEARNING, PAUSED
+  spend              Float    @default(0)
+  roas               Float    @default(0)
+  cpa                Float    @default(0)
+  trend              String   @default("up") // up, down
+  platformAdId       String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  campaignGoal       CampaignGoal  @relation(fields: [campaignGoalId], references: [id], onDelete: Cascade)
+  creativeAsset      CreativeAsset @relation(fields: [creativeAssetId], references: [id], onDelete: Cascade)
+  audience           Audience      @relation(fields: [audienceId], references: [id], onDelete: Cascade)
+}
