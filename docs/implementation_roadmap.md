@@ -8,18 +8,17 @@ A monorepo (e.g., using Turborepo or Nx) is recommended to share types across th
 
 ```text
 AdOptimizer/
-├── apps/
-│   ├── web/                     # Next.js 14 Frontend UI
-│   │   ├── src/app/
-│   │   ├── src/components/
-│   │   └── tailwind.config.js
-│   ├── api/                     # Node.js Serverless Backend (Express/Fastify)
-│   │   ├── src/controllers/
-│   │   ├── src/routes/
-│   │   └── serverless.yml
-│   └── agent-orchestrator/      # Node.js background worker (BullMQ)
-│       ├── src/agents/          # Audience, Creative, Bidding, Attribution logic
-│       └── src/jobs/
+├── web/                         # Next.js 14 Frontend UI
+│   ├── src/app/
+│   ├── src/components/
+│   └── tailwind.config.js
+├── api/                         # Node.js Serverless Backend (Express/Fastify)
+│   ├── src/controllers/
+│   ├── src/routes/
+│   └── serverless.yml
+├── agent-orchestrator/          # Node.js background worker (BullMQ)
+│   ├── src/agents/              # Audience, Creative, Bidding, Attribution logic
+│   └── src/jobs/
 ├── packages/
 │   ├── db/                      # Prisma or Drizzle ORM schema + migrations
 │   ├── config/                  # ESLint, Prettier, TSConfig
