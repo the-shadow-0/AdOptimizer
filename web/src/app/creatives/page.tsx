@@ -10,7 +10,7 @@ export default function CreativeStudio() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/creatives')
+    fetch('/api/v1/creatives')
       .then(res => res.json())
       .then(data => {
         setCreatives(data);

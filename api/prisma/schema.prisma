@@ -108,3 +108,13 @@ model Experiment {
   creativeAsset      CreativeAsset @relation(fields: [creativeAssetId], references: [id], onDelete: Cascade)
   audience           Audience      @relation(fields: [audienceId], references: [id], onDelete: Cascade)
 }
+
+model User {
+  id          String   @id @default(uuid())
+  workspaceId String
+  fullName    String   @default("John Doe")
+  email       String   @default("john@acmecorp.com")
+  avatarInitials String @default("JD")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

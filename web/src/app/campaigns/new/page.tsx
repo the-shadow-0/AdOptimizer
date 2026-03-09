@@ -20,7 +20,7 @@ export default function NewCampaignWizard() {
     
     try {
       // Dispatch agent orchestrator loop
-      const res = await fetch("http://localhost:8080/api/v1/campaigns/orchestrate", {
+      const res = await fetch("/api/v1/campaigns/orchestrate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url, targetRoas: roas, dailyBudget: budget, context })
@@ -31,7 +31,7 @@ export default function NewCampaignWizard() {
 
       // Poll until completion
       const poll = setInterval(async () => {
-        const statusRes = await fetch(`http://localhost:8080/api/v1/campaigns/orchestrate/${jobId}`);
+        const statusRes = await fetch(`/api/v1/campaigns/orchestrate/${jobId}`);
         const statusData = await statusRes.json();
 
         if (statusData.status === 'completed') {

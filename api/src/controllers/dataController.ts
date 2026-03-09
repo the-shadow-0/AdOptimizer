@@ -143,3 +143,66 @@ export const updateWorkspace = async (req: Request, res: Response) => {
   }
 };
 
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    // Get or auto-create the default user for this workspace
+    let user = await prisma.user.findFirst();
+    if (!user) {
+      const workspace = await prisma.workspace.findFirst();
+      if (!workspace) {
+        res.status(404).json({ error: 'No workspace found' });
+        return;
+      }
+      user = await prisma.user.create({
+        data: {
+          workspaceId: workspace.id,
+          fullName: 'John Doe',
+          email: 'john@acmecorp.com',
+          avatarInitials: 'JD',
+        }
+      });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { fullName, email } = req.body;
+    let user = await prisma.user.findFirst();
+    if (!user) {
+      const workspace = await prisma.workspace.findFirst();
+      if (!workspace) {
+        res.status(404).json({ error: 'No workspace found' });
+        return;
+      }
+      user = await prisma.user.create({
+        data: {
+          workspaceId: workspace.id,
+          fullName: fullName || 'John Doe',
+          email: email || 'john@acmecorp.com',
+          avatarInitials: fullName
+            ? fullName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
+            : 'JD',
+        }
+      });
+    } else {
+      const avatarInitials = fullName
+        ? fullName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
+        : user.avatarInitials;
+
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          ...(fullName !== undefined && { fullName, avatarInitials }),
+          ...(email !== undefined && { email }),
+        }
+      });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+};

@@ -10,7 +10,7 @@ export default function CampaignsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/campaigns')
+    fetch('/api/v1/campaigns')
       .then(res => res.json())
       .then(data => {
         setCampaigns(data);
@@ -27,7 +27,7 @@ export default function CampaignsPage() {
     setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
     
     try {
-      await fetch(`http://localhost:8080/api/v1/campaigns/${id}/status`, {
+      await fetch(`/api/v1/campaigns/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

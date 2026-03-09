@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const [workspace, setWorkspace] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/workspace')
+    fetch('/api/v1/workspace')
       .then(res => res.json())
       .then(data => setWorkspace(data))
       .catch(console.error);
@@ -111,7 +111,7 @@ function GeneralSettings({ workspace, onUpdate }: { workspace?: any; onUpdate?: 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:8080/api/v1/workspace/settings', {
+      const res = await fetch('/api/v1/workspace/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, timezone, currency }),
@@ -197,12 +197,49 @@ function GeneralSettings({ workspace, onUpdate }: { workspace?: any; onUpdate?: 
 
 
 function ProfileSettings() {
+  const [user, setUser] = useState<any>(null);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/v1/user')
+      .then(res => res.json())
+      .then(data => {
+        setUser(data);
+        setFullName(data.fullName || '');
+        setEmail(data.email || '');
+      })
+      .catch(console.error);
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/v1/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email }),
+      });
+      if (!res.ok) throw new Error('Update failed');
+      const updated = await res.json();
+      setUser(updated);
+      toast.success('Profile updated successfully.');
+    } catch {
+      toast.error('Failed to update profile. Is the API running?');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const initials = user?.avatarInitials || fullName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2) || 'JD';
+
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
       <h2 className="text-xl font-medium text-white mb-4">My Profile</h2>
       <div className="flex items-center gap-4 mb-6">
         <div className="w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xl border border-indigo-500/30">
-          JD
+          {initials}
         </div>
         <button onClick={() => toast('Avatar upload coming soon.', { icon: '🖼️' })} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors text-sm font-medium">
           Change Avatar
@@ -211,21 +248,36 @@ function ProfileSettings() {
       <div className="max-w-lg space-y-5">
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
-          <input type="text" defaultValue="John Doe" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <input
+            type="text"
+            value={fullName}
+            onChange={e => setFullName(e.target.value)}
+            className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
-          <input type="email" defaultValue="john@acmecorp.com" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </div>
       </div>
       <div className="mt-6 pt-6 border-t border-slate-800 flex justify-end">
-        <button onClick={() => toast.success('Profile updated successfully.')} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium text-sm">
-          Save Profile
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-400 text-white rounded-lg transition-colors font-medium text-sm"
+        >
+          {saving ? 'Saving...' : 'Save Profile'}
         </button>
       </div>
     </div>
   )
 }
+
 
 function BillingSettings() {
   return (

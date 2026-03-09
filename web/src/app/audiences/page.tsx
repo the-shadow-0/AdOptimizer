@@ -21,7 +21,7 @@ export default function AudienceExplorer() {
   const [isClustering, setIsClustering] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/audiences')
+    fetch('/api/v1/audiences')
       .then(res => res.json())
       .then(data => {
         setAudiences(data);
@@ -37,7 +37,7 @@ export default function AudienceExplorer() {
     setIsClustering(true);
     toast('Agent re-evaluating cluster algorithms...', { icon: '⚡' });
     try {
-      await fetch('http://localhost:8080/api/v1/audiences/recluster', { method: 'POST' });
+      await fetch('/api/v1/audiences/recluster', { method: 'POST' });
       toast.success('Audience model recalibrated with new signals.');
     } catch {
       toast.error('Re-clustering failed.');

@@ -21,7 +21,7 @@ export default function ExperimentsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/experiments')
+    fetch('/api/v1/experiments')
       .then(res => res.json())
       .then(data => {
         setExperiments(data);
@@ -38,7 +38,7 @@ export default function ExperimentsPage() {
     setExperiments(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
     
     try {
-      await fetch(`http://localhost:8080/api/v1/experiments/${id}/status`, {
+      await fetch(`/api/v1/experiments/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
