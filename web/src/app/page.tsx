@@ -113,12 +113,12 @@ export default function Dashboard() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div variants={itemVariants} className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <motion.div variants={itemVariants} className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6" style={{ minWidth: 0 }}>
           <div className="mb-6">
             <h2 className="text-lg font-bold text-white font-heading">ROAS Velocity (Intraday)</h2>
             <p className="text-sm text-slate-400">Predicted vs. Actual Returns mapped against Agent Bidding aggressive spikes.</p>
           </div>
-          <div className="h-[300px] w-full">
+          <div style={{ width: '100%', height: 300, minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={performanceData}>
                 <defs>
@@ -139,6 +139,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
         </motion.div>
+
 
         <motion.div variants={itemVariants} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col">
           <div className="mb-4">
