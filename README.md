@@ -18,7 +18,6 @@
 
 ---
 
-## 🖼️ Screenshots
 
 ### 📊 Executive Dashboard
 ![Executive Dashboard](docs/assets/dashboard.png)
