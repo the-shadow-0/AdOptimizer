@@ -1,4 +1,4 @@
-# 🚀 AdOptimizer
+# 🚀 AdOptimizer 
 
 **AdOptimizer** is an AI-powered autonomous advertising optimization platform designed to replace manual media buying with intelligent scale, operating as a true AI media buyer. 🤖📈
 
