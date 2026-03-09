@@ -182,9 +182,6 @@ Open [http://localhost:3000](http://localhost:3000) 🎉
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
-```
-MIT License © 2026 the-shadow-0
-```
 
 ---
 
