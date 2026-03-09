@@ -78,7 +78,7 @@ export default function SettingsPage() {
                exit={{ opacity: 0, y: -10 }}
                transition={{ duration: 0.2 }}
              >
-                {activeTab === 'general' && <GeneralSettings workspace={workspace} />}
+                {activeTab === 'general' && <GeneralSettings workspace={workspace} onUpdate={setWorkspace} />}
                 {activeTab === 'profile' && <ProfileSettings />}
                 {activeTab === 'billing' && <BillingSettings />}
                 {activeTab === 'integrations' && <IntegrationSettings integrations={workspace?.integrations || []} />}
@@ -93,7 +93,40 @@ export default function SettingsPage() {
   );
 }
 
-function GeneralSettings({ workspace }: { workspace?: any }) {
+function GeneralSettings({ workspace, onUpdate }: { workspace?: any; onUpdate?: (w: any) => void }) {
+  const [name, setName] = useState(workspace?.name || '');
+  const [timezone, setTimezone] = useState(workspace?.timezone || 'UTC');
+  const [currency, setCurrency] = useState(workspace?.currency || 'usd');
+  const [saving, setSaving] = useState(false);
+
+  // Sync with loaded workspace data
+  useEffect(() => {
+    if (workspace) {
+      setName(workspace.name || '');
+      setTimezone(workspace.timezone || 'UTC');
+      setCurrency(workspace.currency || 'usd');
+    }
+  }, [workspace]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('http://localhost:8080/api/v1/workspace/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, timezone, currency }),
+      });
+      if (!res.ok) throw new Error('Save failed');
+      const updated = await res.json();
+      onUpdate?.(updated);
+      toast.success('Workspace settings updated successfully.');
+    } catch {
+      toast.error('Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
       <div className="space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
@@ -103,14 +136,19 @@ function GeneralSettings({ workspace }: { workspace?: any }) {
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Workspace Name</label>
                 <input 
                   type="text" 
-                  defaultValue={workspace?.name || "Loading..."} 
+                  value={name}
+                  onChange={e => setName(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Primary Currency</label>
-                <select className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none">
+                <select 
+                  value={currency}
+                  onChange={e => setCurrency(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+                >
                   <option value="usd">USD ($)</option>
                   <option value="eur">EUR (€)</option>
                   <option value="gbp">GBP (£)</option>
@@ -119,18 +157,29 @@ function GeneralSettings({ workspace }: { workspace?: any }) {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Timezone</label>
-                <select className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none">
-                  <option value="EST">Eastern Time (US & Canada)</option>
-                  <option value="PST">Pacific Time (US & Canada)</option>
+                <select 
+                  value={timezone}
+                  onChange={e => setTimezone(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+                >
+                  <option value="America/New_York">Eastern Time (US & Canada)</option>
+                  <option value="America/Los_Angeles">Pacific Time (US & Canada)</option>
+                  <option value="Europe/Paris">Europe/Paris (CET)</option>
+                  <option value="Europe/London">Europe/London (GMT)</option>
                   <option value="UTC">UTC</option>
+                  <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
                 </select>
                 <p className="text-xs text-slate-500 mt-2">Metrics and daily budgets reset based on this timezone.</p>
               </div>
 
             </div>
             <div className="mt-6 pt-6 border-t border-slate-800 flex justify-end">
-              <button onClick={() => toast.success('Workspace settings updated successfully.')} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium text-sm">
-                Save Changes
+              <button 
+                onClick={handleSave}
+                disabled={saving}
+                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-400 text-white rounded-lg transition-colors font-medium text-sm"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>
@@ -145,6 +194,7 @@ function GeneralSettings({ workspace }: { workspace?: any }) {
       </div>
   )
 }
+
 
 function ProfileSettings() {
   return (

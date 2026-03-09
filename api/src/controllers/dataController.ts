@@ -120,3 +120,26 @@ export const getCreatives = async (req: Request, res: Response) => {
     res.status(500).json({ error: String(err) });
   }
 };
+
+export const updateWorkspace = async (req: Request, res: Response) => {
+  try {
+    const { name, timezone, currency } = req.body;
+    const workspace = await prisma.workspace.findFirst();
+    if (!workspace) {
+      res.status(404).json({ error: 'Workspace not found' });
+      return;
+    }
+    const updated = await prisma.workspace.update({
+      where: { id: workspace.id },
+      data: {
+        ...(name && { name }),
+        ...(timezone && { timezone }),
+        ...(currency && { currency }),
+      }
+    });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+};
+

@@ -10,9 +10,9 @@ function seed() {
   const workspaceId = crypto.randomUUID();
   const now = new Date().toISOString();
   db.prepare(`
-    INSERT INTO Workspace (id, name, tier, createdAt, updatedAt) 
-    VALUES (?, ?, ?, ?, ?)
-  `).run(workspaceId, 'Acme Corp Performance', 'SCALE', now, now);
+    INSERT INTO Workspace (id, name, tier, timezone, currency, createdAt, updatedAt) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(workspaceId, 'Acme Corp Performance', 'SCALE', 'UTC', 'usd', now, now);
 
   console.log(`Created Workspace: Acme Corp Performance (${workspaceId})`);
 

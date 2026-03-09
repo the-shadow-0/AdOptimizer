@@ -24,6 +24,7 @@ app.get('/api/v1/campaigns/orchestrate/:jobId', getJobStatus);
 // Data Endpoints
 import {
   getWorkspace,
+  updateWorkspace,
   getCampaigns,
   updateCampaignStatus,
   getExperiments,
@@ -34,6 +35,7 @@ import {
 } from './controllers/dataController';
 
 app.get('/api/v1/workspace', getWorkspace);
+app.put('/api/v1/workspace/settings', updateWorkspace);
 app.get('/api/v1/campaigns', getCampaigns);
 app.put('/api/v1/campaigns/:id/status', updateCampaignStatus);
 app.get('/api/v1/experiments', getExperiments);
