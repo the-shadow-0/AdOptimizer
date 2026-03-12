@@ -1,4 +1,7 @@
+
 <div align="center">
+  <h1>⚡ AdOptimizer</h1>
+  <div align="center">
 
 <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=nextdotjs" />
 <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=nodedotjs" />
@@ -7,11 +10,6 @@
 <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
 
 </div>
-
-<br/>
-
-<div align="center">
-  <h1>⚡ AdOptimizer</h1>
   <p><strong>AI-Powered Ad Campaign Orchestration Platform</strong></p>
   <p>Autonomously generate, test, and optimize advertising creatives powered by local AI (Ollama) and a multi-agent orchestration loop.</p>
 </div>
