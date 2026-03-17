@@ -1,4 +1,4 @@
- <div align="center">
+<div align="center">
   <h1>⚡ AdOptimizer</h1>
   <p><strong>AI-Powered Ad Campaign Orchestration Platform</strong></p>
   <p>Autonomously generate, test, and optimize advertising creatives powered by local AI (Ollama) and a multi-agent orchestration loop.</p>
